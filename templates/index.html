@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AI Face Recognition</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+        body{
+            background:linear-gradient(135deg,#0f172a,#1e293b);
+            color:#e2e8f0;
+        }
+
+        .container{
+            max-width:1100px;
+            margin:auto;
+            padding:40px 20px;
+            text-align:center;
+        }
+
+        h1{
+            font-size:38px;
+            font-weight:700;
+            background:linear-gradient(90deg,#38bdf8,#a78bfa);
+            -webkit-background-clip:text;
+            color:transparent;
+        }
+
+        p{
+            margin-top:10px;
+            opacity:.7;
+        }
+
+        /* Upload Section */
+        .upload-box{
+            margin-top:30px;
+            padding:40px;
+            border-radius:18px;
+            background:#ffffff08;
+            backdrop-filter:blur(12px);
+            border:1px solid #ffffff22;
+        }
+
+        .custom-upload{
+            display:block;
+            padding:35px;
+            border:2px dashed #38bdf8;
+            border-radius:15px;
+            cursor:pointer;
+            transition:.3s;
+            background:#ffffff05;
+        }
+
+        .custom-upload:hover{
+            background:#38bdf822;
+            transform:scale(1.02);
+        }
+
+        .upload-icon{
+            font-size:40px;
+            margin-bottom:10px;
+        }
+
+        button{
+            margin-top:20px;
+            padding:14px 40px;
+            border:none;
+            border-radius:999px;
+            font-size:15px;
+            background:linear-gradient(90deg,#38bdf8,#a78bfa);
+            color:white;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        button:hover{
+            transform:translateY(-2px);
+            box-shadow:0 10px 25px #38bdf833;
+        }
+
+        /* Image Grid */
+        .image-grid{
+            margin-top:40px;
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:25px;
+        }
+
+        .image-card{
+            background:#ffffff08;
+            padding:15px;
+            border-radius:14px;
+            transition:.3s;
+        }
+
+        .image-card:hover{
+            transform:translateY(-6px);
+            box-shadow:0 8px 20px #00000066;
+        }
+
+        .image-card img{
+            width:100%;
+            max-height:220px;
+            object-fit:contain;
+            border-radius:10px;
+        }
+
+        .image-card p{
+            font-size:12px;
+            margin-top:6px;
+            opacity:.7;
+        }
+
+        /* Result */
+        .result{
+            margin-top:45px;
+            padding:25px;
+            border-radius:16px;
+            background:#ffffff08;
+        }
+
+        .result-row{
+            display:flex;
+            justify-content:space-between;
+            padding:12px;
+            margin:8px 0;
+            border-radius:8px;
+            background:#ffffff08;
+        }
+
+        .badge{
+            padding:6px 14px;
+            border-radius:999px;
+            font-size:11px;
+            font-weight:600;
+        }
+
+        .real{background:#22c55e;}
+        .ai{background:#ef4444;}
+
+        .group{
+            margin-top:10px;
+            padding:10px;
+            border-radius:8px;
+            background:#ffffff08;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI Face Recognition System</h1>
+    <p>Detect Similar Faces • Identify AI-Generated Images</p>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="upload-box">
+
+            <label for="fileInput" class="custom-upload">
+                <div class="upload-icon">📁</div>
+                <h3>Click to Upload Images</h3>
+                <p>Supports Multiple Files</p>
+            </label>
+
+            <input id="fileInput" type="file" name="files" multiple required hidden>
+
+            <button>Analyze Images</button>
+
+        </div>
+    </form>
+
+    {% if images %}
+    <h2 style="margin-top:40px;">Uploaded Images</h2>
+    <div class="image-grid">
+        {% for img in images %}
+        <div class="image-card">
+            <img src="{{ url_for('uploaded_file', filename=img) }}">
+            <p>{{ img }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if detections %}
+    <div class="result">
+        <h3>Detection Results</h3>
+        {% for d in detections %}
+        <div class="result-row">
+            {{ d.name }}
+            {% if "AI" in d.result %}
+            <span class="badge ai">AI Generated</span>
+            {% else %}
+            <span class="badge real">Real Image</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if groups %}
+    <div class="result">
+        <h3>Face Grouping</h3>
+        {% for person in groups %}
+        <div class="group">
+            Person {{ loop.index }} : {{ person }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
